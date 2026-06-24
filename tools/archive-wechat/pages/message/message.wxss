@@ -1,0 +1,98 @@
+
+.container {
+  background: #f8f8f8;
+  min-height: 100vh;
+}
+
+.search-bar {
+  padding: 20rpx;
+}
+
+.search-input {
+  width: 100%;
+  background: #eeeeef;
+  border-radius: 50rpx;
+  padding: 16rpx 30rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.message-list {
+  background: white;
+  margin-top: 10rpx;
+}
+
+.message-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+}
+
+.message-info {
+  flex: 1;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10rpx;
+}
+
+.name {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.message-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.last-msg {
+  font-size: 28rpx;
+  color: #666;
+  max-width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unread-badge {
+  background: #ff6b6b;
+  color: white;
+  font-size: 22rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  line-height: 32rpx;
+  text-align: center;
+  padding: 0 8rpx;
+  border-radius: 16rpx;
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400rpx;
+}
+
+.empty-text {
+  color: #999;
+  font-size: 28rpx;
+}

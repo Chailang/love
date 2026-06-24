@@ -1,0 +1,59 @@
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== IDE =====
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+
+# ===== Secrets & local config =====
+.env
+.env.*
+!.env.example
+**/application-local.yml
+**/application-local.properties
+
+# ===== Flutter / Dart (app/) =====
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/.packages
+app/build/
+app/**/GeneratedPluginRegistrant.java
+app/**/ephemeral/
+app/**/.symlinks/
+app/**/doc/api/
+app/coverage/
+*.apk
+*.aab
+*.ipa
+
+# ===== Java / Gradle (server/) =====
+server/.gradle/
+server/**/build/
+server/**/.kotlin/
+*.class
+*.jar
+*.war
+*.log
+
+# ===== Docker runtime data =====
+docker/mysql/data/
+mysql_data/
+
+# ===== Uploads & local storage =====
+uploads/
+qingteng-uploads/
+
+# ===== WeChat mini program (local dev) =====
+**/project.private.config.json
+
+# ===== Misc =====
+*.tmp
+*.bak
+node_modules/

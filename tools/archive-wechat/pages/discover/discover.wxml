@@ -1,0 +1,47 @@
+
+<view class="container">
+  <view class="banner">
+    <image class="banner-img" mode="aspectFill" src="https://via.placeholder.com/750x300/f8f8ff/ccc?text=找个喜欢的人过情人节"></image>
+  </view>
+
+  <!-- 分类入口 -->
+  <view class="category-grid">
+    <view 
+      wx:for="{{categories}}" 
+      wx:key="id" 
+      class="category-item"
+      bindtap="onCategoryTap"
+      data-id="{{item.id}}"
+    >
+      <view class="category-icon">{{item.icon}}</view>
+      <view class="category-title">{{item.title}}</view>
+      <view class="category-count">{{item.count}}人在线</view>
+    </view>
+  </view>
+
+  <!-- 推荐用户列表 -->
+  <view class="section">
+    <view class="section-title">今日推荐</view>
+    <view class="user-list">
+      <view 
+        wx:for="{{users}}" 
+        wx:key="id" 
+        class="user-item card-shadow"
+        bindtap="onUserTap"
+        data-id="{{item.id}}"
+      >
+        <image class="user-avatar" src="{{item.avatar}}"></image>
+        <view class="user-info">
+          <view class="user-name-row">
+            <text class="user-name">{{item.name}}</text>
+            <text class="user-age">{{item.age}}岁 · {{item.distance}}</text>
+          </view>
+          <view class="user-job">{{item.job}} · {{item.location}}</view>
+          <view class="tags">
+            <text wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" class="tag">{{tag}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

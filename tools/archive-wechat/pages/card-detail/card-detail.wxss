@@ -1,0 +1,121 @@
+
+.container {
+  height: 100vh;
+  background: #f8f8f8;
+}
+
+.swiper {
+  width: 100%;
+  height: 700rpx;
+}
+
+.slide-image {
+  width: 100%;
+  height: 100%;
+}
+
+.info-card {
+  background: white;
+  margin: 20rpx;
+  border-radius: 16rpx;
+  padding: 30rpx;
+}
+
+.basic-info {
+
+}
+
+.name-age {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.name {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.age {
+  font-size: 32rpx;
+  color: #666;
+}
+
+.job {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.location {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.tags-section, .about-section {
+  background: white;
+  margin: 20rpx;
+  border-radius: 16rpx;
+  padding: 30rpx;
+}
+
+.section-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.tags {
+  display: flex;
+  gap: 16rpx;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background: #fff0f0;
+  color: #ff6b6b;
+  font-size: 26rpx;
+  padding: 10rpx 24rpx;
+  border-radius: 30rpx;
+}
+
+.about-me {
+  font-size: 28rpx;
+  color: #555;
+  line-height: 1.7;
+}
+
+.bottom-action {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.05);
+}
+
+.action-btn {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  border-radius: 50rpx;
+  font-size: 32rpx;
+}
+
+.nope {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.like {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+  color: white;
+}

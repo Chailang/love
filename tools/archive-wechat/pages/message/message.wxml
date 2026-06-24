@@ -1,0 +1,32 @@
+
+<view class="container">
+  <view class="search-bar">
+    <input class="search-input" placeholder="搜索聊天记录"></input>
+  </view>
+
+  <view class="message-list">
+    <view 
+      wx:for="{{messages}}" 
+      wx:key="id" 
+      class="message-item"
+      bindtap="onMessageTap"
+      data-id="{{item.id}}"
+    >
+      <image class="avatar" src="{{item.avatar}}"></image>
+      <view class="message-info">
+        <view class="message-header">
+          <text class="name">{{item.name}}</text>
+          <text class="time">{{item.time}}</text>
+        </view>
+        <view class="message-row">
+          <text class="last-msg">{{item.lastMsg}}</text>
+          <view wx:if="{{item.unread > 0}}" class="unread-badge">{{item.unread}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{messages.length === 0}}" class="empty-state">
+    <text class="empty-text">还没有消息哦～快去认识新朋友吧</text>
+  </view>
+</view>

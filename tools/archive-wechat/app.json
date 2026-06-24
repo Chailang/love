@@ -1,0 +1,41 @@
+
+{
+  "pages": [
+    "pages/index/index",
+    "pages/discover/discover",
+    "pages/message/message",
+    "pages/profile/profile",
+    "pages/card-detail/card-detail"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "青藤之恋",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#7d7e80",
+    "selectedColor": "#ff6b6b",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "推荐"
+      },
+      {
+        "pagePath": "pages/discover/discover",
+        "text": "发现"
+      },
+      {
+        "pagePath": "pages/message/message",
+        "text": "消息"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json"
+}

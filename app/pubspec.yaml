@@ -1,0 +1,48 @@
+name: qingteng_app
+description: "青藤之恋 - 高学历优质青年严肃婚恋交友平台"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # 网络请求
+  dio: ^5.4.0
+
+  # 状态管理
+  provider: ^6.1.1
+
+  # 本地安全存储（JWT token）
+  flutter_secure_storage: ^9.2.2
+
+  # WebSocket STOMP 聊天
+  stomp_dart_client: ^2.1.0
+
+  # JSON 序列化
+  json_annotation: ^4.9.0
+
+  # 图片缓存
+  cached_network_image: ^3.4.0
+
+  # 图片选择
+  image_picker: ^1.1.2
+
+  # Google Fonts（Nunito + DM Sans 免费字体）
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  json_serializable: ^6.8.0
+  build_runner: ^2.4.9
+
+flutter:
+  uses-material-design: true
+
+  # 字体由 google_fonts 运行时加载，无需额外配置

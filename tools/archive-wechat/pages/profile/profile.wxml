@@ -1,0 +1,58 @@
+
+<view class="container">
+  <!-- 用户信息头部 -->
+  <view class="header">
+    <image class="bg-image" mode="aspectFill" src="https://via.placeholder.com/750x300/f8f0f0/ddd"></image>
+    <view class="user-info">
+      <image class="avatar" src="https://via.placeholder.com/120x120/ffeeee/333?text=Me"></image>
+      <view class="info-text">
+        <view class="user-name">你的名字</view>
+        <view class="verify">✅ 已实名认证</view>
+      </view>
+      <view class="edit-btn" bindtap="onEdit">编辑资料</view>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-list">
+    <view class="menu-item" bindtap="onMenuTap" data-name="我的匹配">
+      <view class="menu-icon">💘</view>
+      <text class="menu-text">我的匹配</text>
+      <text class="arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="onMenuTap" data-name="我的收藏">
+      <view class="menu-icon">⭐</view>
+      <text class="menu-text">我的收藏</text>
+      <text class="arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="onMenuTap" data-name="浏览记录">
+      <view class="menu-icon">👀</view>
+      <text class="menu-text">浏览记录</text>
+      <text class="arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="onMenuTap" data-name="隐私设置">
+      <view class="menu-icon">🔒</view>
+      <text class="menu-text">隐私设置</text>
+      <text class="arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="onMenuTap" data-name="帮助与客服">
+      <view class="menu-icon">💬</view>
+      <text class="menu-text">帮助与客服</text>
+      <text class="arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="onMenuTap" data-name="设置">
+      <view class="menu-icon">⚙️</view>
+      <text class="menu-text">设置</text>
+      <text class="arrow">></text>
+    </view>
+  </view>
+
+  <!-- 开通VIP -->
+  <view class="vip-card card-shadow">
+    <view class="vip-info">
+      <text class="vip-title">开通会员 遇见更好的缘分</text>
+      <text class="vip-sub">查看谁看过你 · 无限喜欢</text>
+    </view>
+    <button class="vip-btn">立即开通</button>
+  </view>
+</view>

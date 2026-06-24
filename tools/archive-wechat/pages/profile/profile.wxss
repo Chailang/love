@@ -1,0 +1,138 @@
+
+.container {
+  background: #f8f8f8;
+  min-height: 100vh;
+}
+
+.header {
+  position: relative;
+  width: 100%;
+  height: 300rpx;
+  overflow: hidden;
+}
+
+.bg-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  filter: blur(10rpx);
+}
+
+.user-info {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  padding: 60rpx 30rpx;
+  color: white;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  border: 4rpx solid white;
+  margin-right: 24rpx;
+}
+
+.info-text {
+  flex: 1;
+}
+
+.user-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.verify {
+  font-size: 24rpx;
+  opacity: 0.9;
+}
+
+.edit-btn {
+  border: 1rpx solid white;
+  border-radius: 50rpx;
+  padding: 12rpx 24rpx;
+  font-size: 26rpx;
+}
+
+.menu-list {
+  background: white;
+  margin-top: 20rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  margin: 20rpx;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx 24rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-icon {
+  font-size: 36rpx;
+  margin-right: 24rpx;
+  width: 40rpx;
+  text-align: center;
+}
+
+.menu-text {
+  flex: 1;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.arrow {
+  color: #ccc;
+  font-size: 32rpx;
+}
+
+.vip-card {
+  margin: 20rpx;
+  background: linear-gradient(135deg, #ffd89b 0%, #ff6b6b 100%);
+  border-radius: 16rpx;
+  padding: 30rpx 24rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.vip-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.vip-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.vip-sub {
+  font-size: 24rpx;
+  opacity: 0.9;
+}
+
+.vip-btn {
+  background: white;
+  color: #ff6b6b;
+  border-radius: 50rpx;
+  font-size: 26rpx;
+  padding: 12rpx 32rpx;
+  line-height: 1.2;
+  border: none;
+}
+
+.vip-btn::after {
+  border: none;
+}

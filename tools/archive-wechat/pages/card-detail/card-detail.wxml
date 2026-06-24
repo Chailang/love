@@ -1,0 +1,51 @@
+
+<scroll-view scroll-y class="container">
+  <!-- 图片轮播 -->
+  <swiper class="swiper" indicator-dots="true" autoplay="false" circular="true">
+    <block wx:for="{{user.photos}}" wx:key="*this">
+      <swiper-item>
+        <image mode="aspectFill" src="{{item}}" class="slide-image"></image>
+      </swiper-item>
+    </block>
+  </swiper>
+
+  <!-- 基本信息 -->
+  <view class="info-card">
+    <view class="basic-info">
+      <view class="name-age">
+        <text class="name">{{user.name}}</text>
+        <text class="age">{{user.age}}岁</text>
+      </view>
+      <view class="job">
+        <text>{{user.education}} · {{user.job}}</text>
+      </view>
+      <view class="location">
+        📍 {{user.location}} · {{user.distance}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 标签 -->
+  <view class="tags-section" wx:if="{{user.tags.length > 0}}">
+    <text class="section-title">标签</text>
+    <view class="tags">
+      <text wx:for="{{user.tags}}" wx:key="*this" class="tag">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 个人简介 -->
+  <view class="about-section">
+    <text class="section-title">关于我</text>
+    <view class="about-me">{{user.aboutMe}}</view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-action">
+    <view class="action-btn nope" bindtap="onNope">
+      <text>👎 跳过</text>
+    </view>
+    <view class="action-btn like" bindtap="onLike">
+      <text>❤️ 喜欢</text>
+    </view>
+  </view>
+</scroll-view>

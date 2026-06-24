@@ -1,0 +1,56 @@
+
+<view class="container">
+  <!-- 顶部标题栏 -->
+  <view class="header">
+    <view class="title">青藤之恋</view>
+    <view class="filter-icon" bindtap="onFilter">🔍</view>
+  </view>
+
+  <!-- 卡片区域 -->
+  <view class="card-container" style="height: {{cardHeight}}px">
+    <view wx:if="{{loading}}" class="loading">加载中...</view>
+    <view wx:elif="{{noMore}}" class="no-more">
+      <text>没有更多啦～</text>
+      <button class="refresh-btn" bindtap="refreshList">刷新一下</button>
+    </view>
+    <view wx:else class="card-stack">
+      <view 
+        class="user-card card-shadow" 
+        style="transform: {{currentIndex === index ? transform : ''}}; opacity: {{currentIndex === index ? 1 : currentIndex - 1 === index ? 0 : 1}}; z-index: {{users.length - index}}"
+        bindtouchstart="onTouchStart" 
+        bindtouchmove="onTouchMove" 
+        bindtouchend="onTouchEnd"
+        data-index="{{index}}"
+      >
+        <image class="card-bg" mode="aspectFill" src="{{item.avatar}}"></image>
+        <view class="card-info">
+          <view class="basic-info">
+            <text class="name">{{item.name}}</text>
+            <text class="age">{{item.age}}岁 · {{item.height}}cm · {{item.education}}</text>
+          </view>
+          <view class="job-location">
+            <text>{{item.job}}</text>
+            <text>· {{item.location}}</text>
+          </view>
+          <view class="distance">📍 {{item.distance}}</view>
+        </view>
+        <!-- 左滑右滑标记 -->
+        <view class="nope-label" wx:if="{{currentIndex === index && translateX < -50}}">👎 不喜欢</view>
+        <view class="like-label" wx:if="{{currentIndex === index && translateX > 50}}">❤️ 喜欢</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作按钮 -->
+  <view class="action-bar">
+    <view class="action-btn nope-btn" bindtap="onNope">
+      <text class="btn-icon">👎</text>
+    </view>
+    <view class="action-btn super-like-btn" bindtap="onSuperLike">
+      <text class="btn-icon">⭐</text>
+    </view>
+    <view class="action-btn like-btn" bindtap="onLike">
+      <text class="btn-icon">❤️</text>
+    </view>
+  </view>
+</view>
