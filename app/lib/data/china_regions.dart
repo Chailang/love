@@ -1,53 +1,72 @@
-/// 中国省市区数据（常用省份 + 下辖城市，全局城市选择器使用）
+import 'dart:convert';
+import 'package:flutter/services.dart';
+
+/// 中国省 / 市 / 区三级数据（来源：modood/Administrative-divisions-of-China）
 class ChinaRegions {
   ChinaRegions._();
 
-  static const Map<String, List<String>> provincesAndCities = {
-    '北京市': ['北京市'],
-    '天津市': ['天津市'],
-    '上海市': ['上海市'],
-    '重庆市': ['重庆市'],
-    '河北省': ['石家庄市', '唐山市', '保定市', '廊坊市'],
-    '山西省': ['太原市', '大同市', '运城市'],
-    '辽宁省': ['沈阳市', '大连市', '鞍山市'],
-    '吉林省': ['长春市', '吉林市'],
-    '黑龙江省': ['哈尔滨市', '齐齐哈尔市'],
-    '江苏省': ['南京市', '苏州市', '无锡市', '常州市', '南通市'],
-    '浙江省': ['杭州市', '宁波市', '温州市', '嘉兴市', '绍兴市'],
-    '安徽省': ['合肥市', '芜湖市', '蚌埠市'],
-    '福建省': ['福州市', '厦门市', '泉州市'],
-    '江西省': ['南昌市', '赣州市', '九江市'],
-    '山东省': ['济南市', '青岛市', '烟台市', '潍坊市'],
-    '河南省': ['郑州市', '洛阳市', '开封市'],
-    '湖北省': ['武汉市', '宜昌市', '襄阳市'],
-    '湖南省': ['长沙市', '株洲市', '湘潭市'],
-    '广东省': ['广州市', '深圳市', '珠海市', '佛山市', '东莞市', '惠州市'],
-    '广西壮族自治区': ['南宁市', '桂林市', '柳州市'],
-    '海南省': ['海口市', '三亚市'],
-    '四川省': ['成都市', '绵阳市', '德阳市'],
-    '贵州省': ['贵阳市', '遵义市'],
-    '云南省': ['昆明市', '大理白族自治州'],
-    '陕西省': ['西安市', '咸阳市', '宝鸡市'],
-    '甘肃省': ['兰州市', '天水市'],
-    '青海省': ['西宁市'],
-    '内蒙古自治区': ['呼和浩特市', '包头市'],
-    '宁夏回族自治区': ['银川市'],
-    '新疆维吾尔自治区': ['乌鲁木齐市', '喀什地区'],
-    '西藏自治区': ['拉萨市'],
-    '香港特别行政区': ['香港'],
-    '澳门特别行政区': ['澳门'],
-    '台湾省': ['台北市', '高雄市'],
-  };
+  static Map<String, Map<String, List<String>>>? _data;
+  static Future<void>? _loading;
 
-  static List<String> get provinces => provincesAndCities.keys.toList();
+  /// 懒加载 assets/data/pca-code.json
+  static Future<void> ensureLoaded() {
+    _loading ??= _load();
+    return _loading!;
+  }
 
-  static List<String> citiesOf(String province) =>
-      List.unmodifiable(provincesAndCities[province] ?? const []);
+  static Future<void> _load() async {
+    if (_data != null) return;
+    final raw = await rootBundle.loadString('assets/data/pca-code.json');
+    final list = jsonDecode(raw) as List<dynamic>;
+    final map = <String, Map<String, List<String>>>{};
+    for (final p in list) {
+      final province = p['name'] as String;
+      final cities = <String, List<String>>{};
+      for (final c in (p['children'] as List<dynamic>? ?? [])) {
+        final city = c['name'] as String;
+        final districts = (c['children'] as List<dynamic>? ?? [])
+            .map((d) => d['name'] as String)
+            .toList();
+        cities[city] = districts;
+      }
+      map[province] = cities;
+    }
+    _data = map;
+  }
 
-  static String defaultProvince() => provinces.first;
+  static void _assertLoaded() {
+    if (_data == null) {
+      throw StateError('ChinaRegions 尚未加载，请先调用 ensureLoaded()');
+    }
+  }
+
+  static List<String> get provinces {
+    _assertLoaded();
+    return _data!.keys.toList();
+  }
+
+  static List<String> citiesOf(String province) {
+    _assertLoaded();
+    return List.unmodifiable(_data![province]?.keys.toList() ?? const []);
+  }
+
+  static List<String> districtsOf(String province, String city) {
+    _assertLoaded();
+    return List.unmodifiable(_data![province]?[city] ?? const []);
+  }
+
+  static String defaultProvince() {
+    _assertLoaded();
+    return provinces.first;
+  }
 
   static String defaultCity(String province) {
     final cities = citiesOf(province);
     return cities.isNotEmpty ? cities.first : '';
+  }
+
+  static String? defaultDistrict(String province, String city) {
+    final districts = districtsOf(province, city);
+    return districts.isNotEmpty ? districts.first : null;
   }
 }

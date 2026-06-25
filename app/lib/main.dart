@@ -8,7 +8,7 @@ import 'services/karma_provider.dart';
 import 'services/chat_provider.dart';
 import 'services/profile_provider.dart';
 import 'screens/onboarding/guide_screen.dart';
-import 'services/app_navigation.dart';
+import 'data/china_regions.dart';
 
 void main() {
   runApp(const QingtengApp());
@@ -52,6 +52,7 @@ class _AuthGateState extends State<_AuthGate> {
   @override
   void initState() {
     super.initState();
+    ChinaRegions.ensureLoaded();
     _check();
   }
 
@@ -60,9 +61,6 @@ class _AuthGateState extends State<_AuthGate> {
     await auth.checkLoginStatus();
     if (mounted) {
       setState(() => _checking = false);
-      if (auth.isLoggedIn) {
-        await navigateForLoggedInUser(context);
-      }
     }
   }
 

@@ -3,11 +3,13 @@ import 'package:provider/provider.dart';
 import '../../config/app_theme.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/city_picker.dart';
+import '../../widgets/birthday_wheel_picker.dart';
+import '../../data/china_regions.dart';
 import '../../services/profile_provider.dart';
 import '../../services/geo_provider.dart';
 import '../../services/app_navigation.dart';
 
-/// 分步资料向导 — 一页一项
+/// 分步资料向导
 class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({super.key});
 
@@ -16,11 +18,12 @@ class ProfileSetupScreen extends StatefulWidget {
 }
 
 class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
-  static const _stepTitles = ['性别', '生日', '居住城市', '居住区域', '工作区域', '故乡'];
+  static const _stepCount = 4;
 
   final _pageController = PageController();
   int _step = 0;
   bool _submitting = false;
+  bool _regionsReady = false;
 
   String? _gender;
   DateTime? _birthDate;
@@ -33,6 +36,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   String? _hometownCity;
 
   @override
+  void initState() {
+    super.initState();
+    ChinaRegions.ensureLoaded().then((_) {
+      if (mounted) setState(() => _regionsReady = true);
+    });
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
@@ -43,16 +54,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       0 => _gender != null,
       1 => _birthDate != null,
       2 => _residenceProvince != null && _residenceCity != null,
-      3 => true,
-      4 => true,
-      5 => _hometownProvince != null && _hometownCity != null,
+      3 => _hometownProvince != null && _hometownCity != null,
       _ => false,
     };
   }
 
   void _next() {
     if (!_canNext) return;
-    if (_step < _stepTitles.length - 1) {
+    if (_step < _stepCount - 1) {
       setState(() => _step++);
       _pageController.nextPage(
         duration: const Duration(milliseconds: 280),
@@ -61,10 +70,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     } else {
       _submit();
     }
-  }
-
-  void _skipOptional() {
-    if (_step == 3 || _step == 4) _next();
   }
 
   Future<void> _submit() async {
@@ -98,7 +103,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     final geoOk = await geo.updateLocation(
       residenceProvince: _residenceProvince,
       residenceCity: _residenceCity,
-      residenceDistrict: _residenceDistrict?.trim().isEmpty == true ? null : _residenceDistrict,
+      residenceDistrict: _residenceDistrict,
       workProvince: _workProvince,
       workCity: _workCity,
       hometownProvince: _hometownProvince,
@@ -121,68 +126,102 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   }
 
   Future<void> _pickBirthday() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime(now.year - 25, now.month, now.day),
-      firstDate: DateTime(1950),
-      lastDate: DateTime(now.year - 18, now.month, now.day),
-      helpText: '选择生日',
-    );
+    final picked = await BirthdayWheelPicker.show(context, initial: _birthDate);
     if (picked != null) setState(() => _birthDate = picked);
   }
 
-  Future<void> _pickCity({
-    required void Function(String province, String city) onPick,
-    String? province,
-    String? city,
-  }) async {
+  Future<void> _pickResidenceCity() async {
     final result = await CityPicker.show(
       context,
-      initialProvince: province,
-      initialCity: city,
+      initialProvince: _residenceProvince,
+      initialCity: _residenceCity,
+      title: '选择居住城市',
     );
-    if (result != null) onPick(result.province, result.city);
+    if (result != null) {
+      setState(() {
+        _residenceProvince = result.province;
+        _residenceCity = result.city;
+        _residenceDistrict = null;
+      });
+    }
+  }
+
+  Future<void> _pickResidenceDistrict() async {
+    if (_residenceProvince == null || _residenceCity == null) {
+      _showSnack('请先选择居住城市');
+      return;
+    }
+    final picked = await DistrictPicker.show(
+      context,
+      province: _residenceProvince!,
+      city: _residenceCity!,
+      initialDistrict: _residenceDistrict,
+    );
+    if (picked != null) setState(() => _residenceDistrict = picked);
+  }
+
+  Future<void> _pickWorkArea() async {
+    final result = await CityPicker.show(
+      context,
+      initialProvince: _workProvince,
+      initialCity: _workCity,
+      title: '选择工作区域',
+    );
+    if (result != null) {
+      setState(() {
+        _workProvince = result.province;
+        _workCity = result.city;
+      });
+    }
+  }
+
+  Future<void> _pickHometown() async {
+    final result = await CityPicker.show(
+      context,
+      initialProvince: _hometownProvince,
+      initialCity: _hometownCity,
+      title: '选择故乡',
+    );
+    if (result != null) {
+      setState(() {
+        _hometownProvince = result.province;
+        _hometownCity = result.city;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final isOptional = _step == 3 || _step == 4;
-    final isLast = _step == _stepTitles.length - 1;
+    final isLast = _step == _stepCount - 1;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('完善资料 (${_step + 1}/${_stepTitles.length})'),
+        title: Text('完善资料 (${_step + 1}/$_stepCount)'),
         automaticallyImplyLeading: false,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           LinearProgressIndicator(
-            value: (_step + 1) / _stepTitles.length,
+            value: (_step + 1) / _stepCount,
             backgroundColor: AppTheme.divider,
             color: AppTheme.primary,
             minHeight: 3,
           ),
           Expanded(
-            child: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                _stepShell('你的性别是？', _buildGenderStep()),
-                _stepShell('你的生日是？', _buildBirthdayStep()),
-                _stepShell('你居住在哪座城市？', _buildResidenceCityStep()),
-                _stepShell('居住区域（选填）', _buildResidenceDistrictStep(), subtitle: '填写后可匹配附近的人'),
-                _stepShell('工作区域（选填）', _buildWorkAreaStep(), subtitle: '填写后可匹配附近的人'),
-                _stepShell('你的故乡是？', _buildHometownStep()),
-              ],
-            ),
+            child: _regionsReady
+                ? PageView(
+                    controller: _pageController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      _stepShell('你的性别是？', _buildGenderStep(), hint: '注册后不可更改'),
+                      _stepShell('你的生日是？', _buildBirthdayStep(), hint: '注册后不可更改'),
+                      _stepShell('你的位置信息', _buildLocationStep(), subtitle: '填写后可匹配附近的人'),
+                      _stepShell('你的故乡是？', _buildHometownStep()),
+                    ],
+                  )
+                : const Center(child: CircularProgressIndicator()),
           ),
-          if (isOptional)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppTheme.pagePaddingH),
-              child: TextButton(onPressed: _skipOptional, child: const Text('跳过')),
-            ),
           Padding(
             padding: const EdgeInsets.fromLTRB(
               AppTheme.pagePaddingH,
@@ -192,7 +231,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             ),
             child: AppPrimaryButton(
               inset: false,
-              onPressed: (!_canNext || _submitting) ? null : _next,
+              onPressed: (!_canNext || _submitting || !_regionsReady) ? null : _next,
               child: _submitting
                   ? const SizedBox(
                       height: 20,
@@ -207,7 +246,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     );
   }
 
-  Widget _stepShell(String title, Widget body, {String? subtitle}) {
+  Widget _stepShell(String title, Widget body, {String? subtitle, String? hint}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppTheme.pagePaddingH),
       child: Column(
@@ -220,7 +259,16 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             Text(subtitle, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14)),
           ],
           const SizedBox(height: AppTheme.spacingXl),
-          body,
+          Expanded(child: SingleChildScrollView(child: body)),
+          if (hint != null) ...[
+            const SizedBox(height: AppTheme.spacingMd),
+            Text(
+              hint,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 13, color: AppTheme.textSecondary),
+            ),
+            const SizedBox(height: AppTheme.spacingMd),
+          ],
         ],
       ),
     );
@@ -290,52 +338,55 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 ],
               ),
             ),
-            const Icon(Icons.calendar_today_outlined, color: AppTheme.textSecondary),
+            const Icon(Icons.date_range_outlined, color: AppTheme.textSecondary),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildResidenceCityStep() {
-    return CityPickerTile(
-      label: '居住城市',
-      province: _residenceProvince,
-      city: _residenceCity,
-      onTap: () => _pickCity(
-        province: _residenceProvince,
-        city: _residenceCity,
-        onPick: (p, c) => setState(() {
-          _residenceProvince = p;
-          _residenceCity = c;
-        }),
-      ),
-    );
-  }
+  Widget _buildLocationStep() {
+    final hasResidenceCity = _residenceProvince != null && _residenceCity != null;
+    final districts = hasResidenceCity
+        ? ChinaRegions.districtsOf(_residenceProvince!, _residenceCity!)
+        : const <String>[];
 
-  Widget _buildResidenceDistrictStep() {
-    return TextField(
-      decoration: const InputDecoration(
-        hintText: '如：朝阳区、浦东新区（可不填）',
-        labelText: '区 / 县',
-      ),
-      onChanged: (v) => _residenceDistrict = v,
-    );
-  }
-
-  Widget _buildWorkAreaStep() {
-    return CityPickerTile(
-      label: '工作城市',
-      province: _workProvince,
-      city: _workCity,
-      onTap: () => _pickCity(
-        province: _workProvince,
-        city: _workCity,
-        onPick: (p, c) => setState(() {
-          _workProvince = p;
-          _workCity = c;
-        }),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        CityPickerTile(
+          label: '居住城市 *',
+          province: _residenceProvince,
+          city: _residenceCity,
+          onTap: _pickResidenceCity,
+        ),
+        const SizedBox(height: AppTheme.spacingMd),
+        CityPickerTile(
+          label: '居住区域（选填）',
+          province: hasResidenceCity ? _residenceProvince : null,
+          city: hasResidenceCity ? _residenceCity : null,
+          district: _residenceDistrict,
+          placeholder: hasResidenceCity
+              ? (districts.isEmpty ? '该城市暂无区县数据' : '请选择区 / 县')
+              : '请先选择居住城市',
+          onTap: () {
+            if (!hasResidenceCity) {
+              _showSnack('请先选择居住城市');
+            } else if (districts.isEmpty) {
+              _showSnack('该城市暂无区县数据');
+            } else {
+              _pickResidenceDistrict();
+            }
+          },
+        ),
+        const SizedBox(height: AppTheme.spacingMd),
+        CityPickerTile(
+          label: '工作区域（选填）',
+          province: _workProvince,
+          city: _workCity,
+          onTap: _pickWorkArea,
+        ),
+      ],
     );
   }
 
@@ -344,14 +395,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       label: '故乡',
       province: _hometownProvince,
       city: _hometownCity,
-      onTap: () => _pickCity(
-        province: _hometownProvince,
-        city: _hometownCity,
-        onPick: (p, c) => setState(() {
-          _hometownProvince = p;
-          _hometownCity = c;
-        }),
-      ),
+      onTap: _pickHometown,
     );
   }
 }

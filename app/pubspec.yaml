@@ -48,4 +48,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  assets:
+    - assets/data/pca-code.json
+
   # 字体由 google_fonts 运行时加载，无需额外配置

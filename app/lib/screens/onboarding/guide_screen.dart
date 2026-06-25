@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../config/app_config.dart';
 import '../../config/app_theme.dart';
 import '../../widgets/app_button.dart';
 import '../../widgets/agreement_dialog.dart';
+import '../../services/auth_provider.dart';
+import '../../services/app_navigation.dart';
 import '../auth/login_screen.dart';
 
-/// 新用户引导页 — App 首屏（未登录）
+/// 新用户引导页 — App 启动首屏
 class GuideScreen extends StatelessWidget {
   const GuideScreen({super.key});
 
   void _onStart(BuildContext context) {
     AgreementDialog.show(
       context,
-      onAgree: () {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-        );
+      onAgree: () async {
+        final auth = context.read<AuthProvider>();
+        if (auth.isLoggedIn) {
+          await navigateAfterAuth(context);
+        } else if (context.mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
+          );
+        }
       },
     );
   }
