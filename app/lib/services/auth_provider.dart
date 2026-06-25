@@ -18,10 +18,25 @@ class AuthProvider extends ChangeNotifier {
   String? get error => _error;
   AuthResponse? get user => _user;
 
-  /// 检查本地 Token
+  /// 检查本地 Token 是否仍有效（仅存在不够，须向后端校验）
   Future<void> checkLoginStatus() async {
     final token = await TokenStorage.getToken();
-    _isLoggedIn = token != null;
+    if (token == null) {
+      _isLoggedIn = false;
+      notifyListeners();
+      return;
+    }
+
+    try {
+      await _api.getUserCenter();
+      _isLoggedIn = true;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+        await TokenStorage.clear();
+      }
+      _isLoggedIn = false;
+      _user = null;
+    }
     notifyListeners();
   }
 

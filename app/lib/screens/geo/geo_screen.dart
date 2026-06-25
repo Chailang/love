@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../config/app_theme.dart';
 import '../../services/geo_provider.dart';
 import '../../widgets/geo_neighbor_card.dart';
+import '../../widgets/app_button.dart';
 import 'edit_geo_sheet.dart';
 
 class GeoScreen extends StatefulWidget {
@@ -84,7 +85,7 @@ class _GeoScreenState extends State<GeoScreen> {
   Widget _buildEmptyLocation() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingXl),
+        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingXl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -109,14 +110,18 @@ class _GeoScreenState extends State<GeoScreen> {
               style: TextStyle(color: AppTheme.textSecondary, height: 1.5),
             ),
             const SizedBox(height: AppTheme.spacingXl),
-            SizedBox(
-              width: 220,
-              child: ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const EditGeoSheet()),
-                ),
-                icon: const Icon(Icons.edit_location_alt),
-                label: const Text('去设置'),
+            AppPrimaryButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const EditGeoSheet()),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.edit_location_alt),
+                  SizedBox(width: AppTheme.spacingSm),
+                  Text('去设置'),
+                ],
               ),
             ),
           ],

@@ -30,11 +30,11 @@ class _HomeScreenState extends State<HomeScreen> {
       body: IndexedStack(
         index: _currentIndex,
         children: const [
-          DiscoverScreen(),              // 寻觅 ✅
-          GeoScreen(),                   // 同乡 ✅
-          BlindboxScreen(),              // 盲盒 ✅
-          ConversationListScreen(),      // 消息 ✅
-          ProfileScreen(),               // 我的 ✅
+          DiscoverScreen(key: PageStorageKey('tab_discover')),
+          GeoScreen(key: PageStorageKey('tab_geo')),
+          BlindboxScreen(key: PageStorageKey('tab_blindbox')),
+          ConversationListScreen(key: PageStorageKey('tab_chat')),
+          ProfileScreen(key: PageStorageKey('tab_profile')),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

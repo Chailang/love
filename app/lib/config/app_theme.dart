@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// 青藤之恋 — 浪漫玫瑰主题
+/// 小镇之恋 — 浪漫玫瑰主题
 class AppTheme {
   // ======== 主色调：浪漫玫瑰系 ========
   static const Color primary = Color(0xFFE11D48);       // 玫瑰红
@@ -43,6 +43,9 @@ class AppTheme {
   static const double spacingLg = 24;
   static const double spacingXl = 32;
 
+  /// 页面内容 / 主按钮左右统一边距
+  static const double pagePaddingH = 40;
+
   // ======== 圆角 ========
   static const double radiusSm = 8;
   static const double radiusMd = 12;
@@ -81,7 +84,16 @@ class AppTheme {
           style: ElevatedButton.styleFrom(
             backgroundColor: primary,
             foregroundColor: Colors.white,
-            minimumSize: const Size(double.infinity, 52),
+            minimumSize: const Size(0, 52),
+            padding: const EdgeInsets.symmetric(horizontal: spacingLg, vertical: spacingMd),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radiusMd)),
+            textStyle: GoogleFonts.nunito(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(0, 52),
+            padding: const EdgeInsets.symmetric(horizontal: spacingLg, vertical: spacingMd),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radiusMd)),
             textStyle: GoogleFonts.nunito(fontSize: 16, fontWeight: FontWeight.w600),
           ),

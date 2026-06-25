@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../config/app_theme.dart';
 import '../../services/match_provider.dart';
 import '../../widgets/recommend_card.dart';
+import '../../widgets/app_button.dart';
 import 'match_dialog.dart';
 
 class DiscoverScreen extends StatefulWidget {
@@ -67,7 +68,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             const SizedBox(height: AppTheme.spacingMd),
             Text(provider.error!, style: const TextStyle(color: AppTheme.textSecondary)),
             const SizedBox(height: AppTheme.spacingLg),
-            ElevatedButton(
+            AppPrimaryButton(
               onPressed: () => provider.loadRecommend(),
               child: const Text('重新加载'),
             ),
@@ -88,7 +89,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             const SizedBox(height: AppTheme.spacingXs),
             const Text('明天再来看看吧 🌙', style: TextStyle(color: AppTheme.textSecondary)),
             const SizedBox(height: AppTheme.spacingLg),
-            ElevatedButton(
+            AppPrimaryButton(
               onPressed: () => provider.loadRecommend(),
               child: const Text('刷新试试'),
             ),

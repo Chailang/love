@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../config/app_theme.dart';
+import '../../widgets/app_button.dart';
 import '../../models/karma_models.dart';
 
 /// 抽奖结果展示弹窗
@@ -106,12 +107,10 @@ class KarmaResultDialog extends StatelessWidget {
             const SizedBox(height: AppTheme.spacingLg),
 
             // 关闭按钮
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('知道了'),
-              ),
+            AppPrimaryButton(
+              inset: false,
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('知道了'),
             ),
           ],
         ),
@@ -293,12 +292,10 @@ class MultiGachaResultDialog extends StatelessWidget {
               _goldenBanner('🌟 获得 $ssrCount 个 SSR! 🌟'),
             const SizedBox(height: AppTheme.spacingLg),
 
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('太棒了！'),
-              ),
+            AppPrimaryButton(
+              inset: false,
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('太棒了！'),
             ),
           ],
         ),

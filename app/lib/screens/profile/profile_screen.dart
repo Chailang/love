@@ -5,6 +5,7 @@ import '../../config/app_theme.dart';
 import '../../services/auth_provider.dart';
 import '../../services/profile_provider.dart';
 import '../../models/user_center.dart';
+import '../../widgets/app_button.dart';
 import 'edit_profile_sheet.dart';
 import 'privacy_screen.dart';
 
@@ -16,6 +17,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  static final _logoutStyle = OutlinedButton.styleFrom(
+    foregroundColor: Colors.red,
+    side: const BorderSide(color: Colors.red),
+  );
+
   @override
   void initState() {
     super.initState();
@@ -44,11 +50,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildBody(ProfileProvider provider) {
     if (provider.isLoading && provider.center == null) {
-      return const Center(child: CircularProgressIndicator(color: AppTheme.primary));
+      return const Center(
+        key: ValueKey('profile_loading'),
+        child: CircularProgressIndicator(color: AppTheme.primary),
+      );
     }
 
     if (provider.center == null) {
       return Center(
+        key: const ValueKey('profile_error'),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -56,7 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: AppTheme.spacingMd),
             const Text('加载失败', style: TextStyle(color: AppTheme.textSecondary)),
             const SizedBox(height: AppTheme.spacingLg),
-            ElevatedButton(
+            AppPrimaryButton(
               onPressed: () => provider.loadCenter(),
               child: const Text('重试'),
             ),
@@ -67,6 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     final c = provider.center!;
     return RefreshIndicator(
+      key: const ValueKey('profile_content'),
       onRefresh: () => provider.loadCenter(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -304,24 +315,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _menuItem(Icons.stars_outlined, '我的缘分', '缘分盲盒记录'),
         _menuItem(Icons.security_outlined, '隐私设置', '管理位置/在线状态'),
         _menuItem(Icons.help_outline, '帮助与反馈', ''),
-        _menuItem(Icons.info_outline, '关于青藤之恋', 'v1.0.0'),
+        _menuItem(Icons.info_outline, '关于小镇之恋', 'v1.0.0'),
 
         const SizedBox(height: AppTheme.spacingMd),
 
         // 退出登录
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
-          width: double.infinity,
-          child: OutlinedButton(
-            onPressed: () => _logout(context),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.red,
-              side: const BorderSide(color: Colors.red),
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusMd)),
-            ),
-            child: const Text('退出登录'),
-          ),
+        AppOutlinedButton(
+          buttonKey: const ValueKey('profile_logout'),
+          onPressed: () => _logout(context),
+          style: _logoutStyle,
+          child: const Text('退出登录'),
         ),
         const SizedBox(height: AppTheme.spacingXl),
       ],

@@ -2,7 +2,7 @@
 <view class="container">
   <!-- 顶部标题栏 -->
   <view class="header">
-    <view class="title">青藤之恋</view>
+    <view class="title">小镇之恋</view>
     <view class="filter-icon" bindtap="onFilter">🔍</view>
   </view>
 

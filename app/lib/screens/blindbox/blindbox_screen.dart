@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../config/app_theme.dart';
+import '../../widgets/app_button.dart';
 import '../../services/karma_provider.dart';
 import 'karma_result_dialog.dart';
 
@@ -44,7 +45,7 @@ class _BlindboxScreenState extends State<BlindboxScreen> {
             const SizedBox(height: AppTheme.spacingMd),
             Text(provider.error!, style: const TextStyle(color: AppTheme.textSecondary)),
             const SizedBox(height: AppTheme.spacingLg),
-            ElevatedButton(
+            AppPrimaryButton(
               onPressed: () => provider.loadAccount(),
               child: const Text('重试'),
             ),

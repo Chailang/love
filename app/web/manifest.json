@@ -1,6 +1,6 @@
 {
-    "name": "qingteng_app",
-    "short_name": "qingteng_app",
+    "name": "小镇之恋",
+    "short_name": "小镇之恋",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

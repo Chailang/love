@@ -25,11 +25,11 @@ class QingtengApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MatchProvider()),
         ChangeNotifierProvider(create: (_) => GeoProvider()),
         ChangeNotifierProvider(create: (_) => KarmaProvider()),
-        ChangeNotifierProvider(create: (_) => ChatProvider()..init()),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
       ],
       child: MaterialApp(
-        title: '青藤之恋',
+        title: '小镇之恋',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light(),
         home: const _AuthGate(),
@@ -64,7 +64,10 @@ class _AuthGateState extends State<_AuthGate> {
     if (mounted) {
       setState(() => _checking = false);
       if (auth.isLoggedIn) {
-        Navigator.of(context).pushReplacementNamed('/home');
+        await context.read<ChatProvider>().init();
+        if (mounted) {
+          Navigator.of(context).pushReplacementNamed('/home');
+        }
       }
     }
   }

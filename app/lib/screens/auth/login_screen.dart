@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../config/app_config.dart';
 import '../../config/app_theme.dart';
+import '../../widgets/app_button.dart';
 import '../../services/auth_provider.dart';
+import '../../services/chat_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -56,7 +58,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (mounted) {
       if (ok) {
-        Navigator.of(context).pushReplacementNamed('/home');
+        await context.read<ChatProvider>().init();
+        if (mounted) {
+          Navigator.of(context).pushReplacementNamed('/home');
+        }
       } else {
         _showSnack(auth.error ?? '操作失败');
       }
@@ -74,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
+          padding: const EdgeInsets.symmetric(horizontal: AppTheme.pagePaddingH),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -165,7 +170,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
 
               // 提交按钮
-              ElevatedButton(
+              AppPrimaryButton(
+                inset: false,
                 onPressed: auth.isLoading ? null : _submit,
                 child: auth.isLoading
                     ? const SizedBox(

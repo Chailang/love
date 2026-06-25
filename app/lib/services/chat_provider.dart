@@ -40,13 +40,14 @@ class ChatProvider extends ChangeNotifier {
   // ==============================
 
   Future<void> init() async {
+    final token = await TokenStorage.getToken();
+    if (token == null) return;
+
+    final uid = await TokenStorage.getUserId();
+    if (uid != null) _myUserId = uid;
+
     await loadConversations();
     _connectWebSocket();
-    // 从 token storage 读取 userId
-    final uid = await TokenStorage.getUserId();
-    if (uid != null) {
-      _myUserId = uid;
-    }
   }
 
   // ==============================
