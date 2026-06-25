@@ -11,4 +11,10 @@ class AppConfig {
 
   /// 应用 Slogan
   static const String slogan = '在小镇之恋，遇见和你一样优秀的TA';
+
+  /// 用户协议 URL（占位，后续替换为正式 H5）
+  static const String userAgreementUrl = 'https://www.baidu.com';
+
+  /// 隐私政策 URL（占位，后续替换为正式 H5）
+  static const String privacyPolicyUrl = 'https://www.baidu.com';
 }

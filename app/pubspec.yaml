@@ -35,6 +35,9 @@ dependencies:
   # Google Fonts（Nunito + DM Sans 免费字体）
   google_fonts: ^6.2.1
 
+  # 打开用户协议 / 隐私政策外链
+  url_launcher: ^6.3.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

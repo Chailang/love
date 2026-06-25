@@ -36,7 +36,7 @@ class GeoProvider extends ChangeNotifier {
     try {
       final resp = await _api.getMyGeo();
       _myGeo = resp.data as Map<String, dynamic>?;
-      _hasLocation = _myGeo != null && _myGeo!['id'] != null;
+      _hasLocation = _myGeo != null && _myGeo!['userId'] != null;
       _isLoading = false;
       notifyListeners();
     } on DioException catch (e) {

@@ -57,6 +57,11 @@ public class GeoService {
             geo.setWorkDistrict(request.getWorkDistrict());
         }
         // 居住
+        if (request.getResidenceProvince() != null) {
+            geo.setResidenceProvince(request.getResidenceProvince());
+            geo.setResidenceCity(request.getResidenceCity());
+            geo.setResidenceDistrict(request.getResidenceDistrict());
+        }
         if (request.getResidenceLat() != null && request.getResidenceLng() != null) {
             geo.setResidenceLat(BigDecimal.valueOf(request.getResidenceLat()).setScale(7, RoundingMode.HALF_UP));
             geo.setResidenceLng(BigDecimal.valueOf(request.getResidenceLng()).setScale(7, RoundingMode.HALF_UP));

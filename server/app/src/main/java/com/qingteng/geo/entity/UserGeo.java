@@ -48,6 +48,18 @@ public class UserGeo {
 
     // ======== 居住位置（第三维）========
 
+    /** 居住省份 */
+    @Column(name = "residence_province", length = 30)
+    private String residenceProvince;
+
+    /** 居住城市 */
+    @Column(name = "residence_city", length = 30)
+    private String residenceCity;
+
+    /** 居住区县 */
+    @Column(name = "residence_district", length = 30)
+    private String residenceDistrict;
+
     /** 居住纬度 */
     @Column(precision = 10, scale = 7)
     private BigDecimal residenceLat;

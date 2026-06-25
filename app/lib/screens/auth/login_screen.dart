@@ -4,7 +4,7 @@ import '../../config/app_config.dart';
 import '../../config/app_theme.dart';
 import '../../widgets/app_button.dart';
 import '../../services/auth_provider.dart';
-import '../../services/chat_provider.dart';
+import '../../services/app_navigation.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -58,10 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (mounted) {
       if (ok) {
-        await context.read<ChatProvider>().init();
-        if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/home');
-        }
+        await navigateAfterAuth(context);
       } else {
         _showSnack(auth.error ?? '操作失败');
       }

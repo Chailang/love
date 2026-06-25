@@ -52,7 +52,18 @@ public class UserService {
         if (request.getBio() != null) user.setBio(request.getBio());
 
         recalcCompleteness(user);
+        activateIfBasicProfileReady(user);
         return userRepository.save(user);
+    }
+
+    /** 引导资料填完后激活账号 */
+    private void activateIfBasicProfileReady(User user) {
+        if (user.getStatus() == User.UserStatus.INCOMPLETE
+                && user.getGender() != null
+                && user.getBirthDate() != null
+                && user.getCity() != null && !user.getCity().isBlank()) {
+            user.setStatus(User.UserStatus.ACTIVE);
+        }
     }
 
     private void recalcCompleteness(User user) {

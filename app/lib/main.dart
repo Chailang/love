@@ -7,8 +7,8 @@ import 'services/geo_provider.dart';
 import 'services/karma_provider.dart';
 import 'services/chat_provider.dart';
 import 'services/profile_provider.dart';
-import 'screens/auth/login_screen.dart';
-import 'screens/home_screen.dart';
+import 'screens/onboarding/guide_screen.dart';
+import 'services/app_navigation.dart';
 
 void main() {
   runApp(const QingtengApp());
@@ -33,9 +33,6 @@ class QingtengApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light(),
         home: const _AuthGate(),
-        routes: {
-          '/home': (context) => const HomeScreen(),
-        },
       ),
     );
   }
@@ -64,10 +61,7 @@ class _AuthGateState extends State<_AuthGate> {
     if (mounted) {
       setState(() => _checking = false);
       if (auth.isLoggedIn) {
-        await context.read<ChatProvider>().init();
-        if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/home');
-        }
+        await navigateForLoggedInUser(context);
       }
     }
   }
@@ -79,6 +73,6 @@ class _AuthGateState extends State<_AuthGate> {
         body: Center(child: CircularProgressIndicator()),
       );
     }
-    return const LoginScreen();
+    return const GuideScreen();
   }
 }

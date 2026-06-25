@@ -20,7 +20,10 @@ public class GeoInputRequest {
     private String workCity;
     private String workDistrict;
 
-    // 居住经纬度
+    // 居住
+    private String residenceProvince;
+    private String residenceCity;
+    private String residenceDistrict;
     private Double residenceLat;
     private Double residenceLng;
 
