@@ -30,8 +30,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   String? _residenceProvince;
   String? _residenceCity;
   String? _residenceDistrict;
-  String? _workProvince;
-  String? _workCity;
+  String? _workDistrict;
   String? _hometownProvince;
   String? _hometownCity;
 
@@ -104,8 +103,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       residenceProvince: _residenceProvince,
       residenceCity: _residenceCity,
       residenceDistrict: _residenceDistrict,
-      workProvince: _workProvince,
-      workCity: _workCity,
+      workProvince: _residenceProvince,
+      workCity: _residenceCity,
+      workDistrict: _workDistrict,
       hometownProvince: _hometownProvince,
       hometownCity: _hometownCity,
     );
@@ -114,11 +114,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     setState(() => _submitting = false);
 
     if (!geoOk) {
-      _showSnack(geo.error ?? '位置信息保存失败');
-      return;
+      _showSnack(geo.error ?? '位置信息保存失败，可稍后在「我的」中补充');
     }
 
-    await navigateAfterAuth(context);
+    await navigateToHome(context);
   }
 
   void _showSnack(String msg) {
@@ -138,10 +137,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       title: '选择居住城市',
     );
     if (result != null) {
+      final n = ChinaRegions.normalize(result.province, result.city);
       setState(() {
-        _residenceProvince = result.province;
-        _residenceCity = result.city;
+        _residenceProvince = n.province;
+        _residenceCity = n.city;
         _residenceDistrict = null;
+        _workDistrict = null;
       });
     }
   }
@@ -156,23 +157,24 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       province: _residenceProvince!,
       city: _residenceCity!,
       initialDistrict: _residenceDistrict,
+      title: '选择居住区域',
     );
     if (picked != null) setState(() => _residenceDistrict = picked);
   }
 
-  Future<void> _pickWorkArea() async {
-    final result = await CityPicker.show(
+  Future<void> _pickWorkDistrict() async {
+    if (_residenceProvince == null || _residenceCity == null) {
+      _showSnack('请先选择居住城市');
+      return;
+    }
+    final picked = await DistrictPicker.show(
       context,
-      initialProvince: _workProvince,
-      initialCity: _workCity,
+      province: _residenceProvince!,
+      city: _residenceCity!,
+      initialDistrict: _workDistrict,
       title: '选择工作区域',
     );
-    if (result != null) {
-      setState(() {
-        _workProvince = result.province;
-        _workCity = result.city;
-      });
-    }
+    if (picked != null) setState(() => _workDistrict = picked);
   }
 
   Future<void> _pickHometown() async {
@@ -183,9 +185,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       title: '选择故乡',
     );
     if (result != null) {
+      final n = ChinaRegions.normalize(result.province, result.city);
       setState(() {
-        _hometownProvince = result.province;
-        _hometownCity = result.city;
+        _hometownProvince = n.province;
+        _hometownCity = n.city;
       });
     }
   }
@@ -348,7 +351,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   Widget _buildLocationStep() {
     final hasResidenceCity = _residenceProvince != null && _residenceCity != null;
     final districts = hasResidenceCity
-        ? ChinaRegions.districtsOf(_residenceProvince!, _residenceCity!)
+        ? ChinaRegions.districtsOfCity(_residenceProvince!, _residenceCity!)
         : const <String>[];
 
     return Column(
@@ -363,8 +366,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         const SizedBox(height: AppTheme.spacingMd),
         CityPickerTile(
           label: '居住区域（选填）',
-          province: hasResidenceCity ? _residenceProvince : null,
-          city: hasResidenceCity ? _residenceCity : null,
+          districtOnly: true,
           district: _residenceDistrict,
           placeholder: hasResidenceCity
               ? (districts.isEmpty ? '该城市暂无区县数据' : '请选择区 / 县')
@@ -382,9 +384,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         const SizedBox(height: AppTheme.spacingMd),
         CityPickerTile(
           label: '工作区域（选填）',
-          province: _workProvince,
-          city: _workCity,
-          onTap: _pickWorkArea,
+          districtOnly: true,
+          district: _workDistrict,
+          placeholder: hasResidenceCity
+              ? (districts.isEmpty ? '该城市暂无区县数据' : '请选择区 / 县')
+              : '请先选择居住城市',
+          onTap: _pickWorkDistrict,
         ),
       ],
     );

@@ -9,6 +9,7 @@ import 'services/chat_provider.dart';
 import 'services/profile_provider.dart';
 import 'screens/onboarding/guide_screen.dart';
 import 'data/china_regions.dart';
+import 'services/app_navigation.dart';
 
 void main() {
   runApp(const QingtengApp());
@@ -59,6 +60,12 @@ class _AuthGateState extends State<_AuthGate> {
   Future<void> _check() async {
     final auth = context.read<AuthProvider>();
     await auth.checkLoginStatus();
+    if (!mounted) return;
+
+    if (auth.isLoggedIn) {
+      await navigateForLoggedInUser(context);
+    }
+
     if (mounted) {
       setState(() => _checking = false);
     }

@@ -4,10 +4,9 @@ import '../models/user_center.dart';
 class OnboardingHelper {
   OnboardingHelper._();
 
-  /// 登录后是否还需走分步资料向导
+  /// 登录后是否还需走分步资料向导（以必填字段为准，不单看 status）
   static bool needsProfileSetup(UserCenter? center) {
     if (center == null) return true;
-    if (center.status == 'INCOMPLETE') return true;
     if (center.gender == null || center.gender!.isEmpty) return true;
     if (center.age == null) return true;
     if (center.city == null || center.city!.isEmpty) return true;

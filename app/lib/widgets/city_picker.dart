@@ -4,7 +4,7 @@ import '../data/china_regions.dart';
 
 typedef RegionSelection = ({String province, String city, String? district});
 
-/// 省 / 市 / 区选择器（全局通用，三列联动）
+/// 省 / 市 / 区选择器（直辖市自动隐藏「市辖区」，仅显示省 + 区）
 class CityPicker extends StatefulWidget {
   final String? initialProvince;
   final String? initialCity;
@@ -21,7 +21,6 @@ class CityPicker extends StatefulWidget {
     this.onChanged,
   });
 
-  /// 底部弹层选择
   static Future<RegionSelection?> show(
     BuildContext context, {
     String? initialProvince,
@@ -65,25 +64,29 @@ class _CityPickerState extends State<CityPicker> {
 
   void _initSelection() {
     _province = widget.initialProvince ?? ChinaRegions.defaultProvince();
-    final cities = ChinaRegions.citiesOf(_province);
-    _city = widget.initialCity != null && cities.contains(widget.initialCity!)
-        ? widget.initialCity!
-        : ChinaRegions.defaultCity(_province);
-    final districts = ChinaRegions.districtsOf(_province, _city);
+    _city = _resolveCity(_province, widget.initialCity);
+    final districts = ChinaRegions.districtsOfCity(_province, _city);
     _district = widget.initialDistrict != null && districts.contains(widget.initialDistrict!)
         ? widget.initialDistrict
         : (widget.showDistrict && districts.isNotEmpty ? districts.first : null);
   }
 
+  String _resolveCity(String province, String? city) {
+    final cities = ChinaRegions.citiesOf(province);
+    if (city != null && cities.contains(city)) return city;
+    return ChinaRegions.defaultCity(province);
+  }
+
   void _notify() {
-    widget.onChanged?.call((province: _province, city: _city, district: _district));
+    final n = ChinaRegions.normalize(_province, _city);
+    widget.onChanged?.call((province: n.province, city: n.city, district: _district));
   }
 
   void _selectProvince(String province) {
     setState(() {
       _province = province;
       _city = ChinaRegions.defaultCity(province);
-      final districts = ChinaRegions.districtsOf(_province, _city);
+      final districts = ChinaRegions.districtsOfCity(_province, _city);
       _district = widget.showDistrict && districts.isNotEmpty ? districts.first : null;
     });
     _notify();
@@ -92,7 +95,7 @@ class _CityPickerState extends State<CityPicker> {
   void _selectCity(String city) {
     setState(() {
       _city = city;
-      final districts = ChinaRegions.districtsOf(_province, _city);
+      final districts = ChinaRegions.districtsOfCity(_province, _city);
       _district = widget.showDistrict && districts.isNotEmpty ? districts.first : null;
     });
     _notify();
@@ -106,7 +109,7 @@ class _CityPickerState extends State<CityPicker> {
   @override
   Widget build(BuildContext context) {
     final cities = ChinaRegions.citiesOf(_province);
-    final districts = ChinaRegions.districtsOf(_province, _city);
+    final districts = ChinaRegions.districtsOfCity(_province, _city);
 
     return SizedBox(
       height: 280,
@@ -186,7 +189,7 @@ class _CityPickerSheetState extends State<_CityPickerSheet> {
     _city = widget.initialCity != null && cities.contains(widget.initialCity!)
         ? widget.initialCity!
         : ChinaRegions.defaultCity(_province);
-    final districts = ChinaRegions.districtsOf(_province, _city);
+    final districts = ChinaRegions.districtsOfCity(_province, _city);
     _district = widget.initialDistrict != null && districts.contains(widget.initialDistrict!)
         ? widget.initialDistrict
         : (widget.showDistrict && districts.isNotEmpty ? districts.first : null);
@@ -210,10 +213,10 @@ class _CityPickerSheetState extends State<_CityPickerSheet> {
               TextButton(onPressed: () => Navigator.pop(context), child: const Text('取消')),
               Text(widget.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
               TextButton(
-                onPressed: () => Navigator.pop(
-                  context,
-                  (province: _province, city: _city, district: _district),
-                ),
+                onPressed: () {
+                  final n = ChinaRegions.normalize(_province, _city);
+                  Navigator.pop(context, (province: n.province, city: n.city, district: _district));
+                },
                 child: const Text('确定'),
               ),
             ],
@@ -237,22 +240,20 @@ class _CityPickerSheetState extends State<_CityPickerSheet> {
   }
 }
 
-/// 区县选择（基于已选省 / 市）
+/// 区县选择（基于已选省 / 市，直辖市同样适用）
 class DistrictPicker {
   static Future<String?> show(
     BuildContext context, {
     required String province,
     required String city,
     String? initialDistrict,
+    String title = '选择区域',
   }) async {
     await ChinaRegions.ensureLoaded();
-    final districts = ChinaRegions.districtsOf(province, city);
+    final normalized = ChinaRegions.normalize(province, city);
+    final districts = ChinaRegions.districtsOfCity(normalized.province, normalized.city);
     if (districts.isEmpty) return null;
     if (!context.mounted) return null;
-
-    var selected = initialDistrict != null && districts.contains(initialDistrict)
-        ? initialDistrict
-        : districts.first;
 
     return showModalBottomSheet<String>(
       context: context,
@@ -267,8 +268,8 @@ class DistrictPicker {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
-                const Text('选择区域', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                TextButton(onPressed: () => Navigator.pop(ctx, selected), child: const Text('确定')),
+                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                const SizedBox(width: 48),
               ],
             ),
             SizedBox(
@@ -277,7 +278,7 @@ class DistrictPicker {
                 itemCount: districts.length,
                 itemBuilder: (_, i) {
                   final d = districts[i];
-                  final isSelected = d == selected;
+                  final isSelected = d == initialDistrict;
                   return ListTile(
                     title: Text(
                       d,
@@ -306,6 +307,7 @@ class CityPickerTile extends StatelessWidget {
   final String? city;
   final String? district;
   final String placeholder;
+  final bool districtOnly;
   final VoidCallback onTap;
 
   const CityPickerTile({
@@ -315,20 +317,26 @@ class CityPickerTile extends StatelessWidget {
     this.city,
     this.district,
     this.placeholder = '请选择',
+    this.districtOnly = false,
     required this.onTap,
   });
 
   String get _display {
-    if (province == null || city == null) return placeholder;
-    if (district != null && district!.isNotEmpty) {
-      return '$province $city $district';
+    if (districtOnly) {
+      return district != null && district!.isNotEmpty ? district! : placeholder;
     }
-    return '$province $city';
+    if (province == null) return placeholder;
+    final text = ChinaRegions.formatAddress(province: province, city: city, district: district);
+    return text.isEmpty ? placeholder : text;
+  }
+
+  bool get _hasValue {
+    if (districtOnly) return district != null && district!.isNotEmpty;
+    return province != null && (ChinaRegions.isMunicipality(province!) || city != null);
   }
 
   @override
   Widget build(BuildContext context) {
-    final hasValue = province != null && city != null;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -350,7 +358,7 @@ class CityPickerTile extends StatelessWidget {
                     _display,
                     style: TextStyle(
                       fontSize: 16,
-                      color: hasValue ? AppTheme.textPrimary : AppTheme.textHint,
+                      color: _hasValue ? AppTheme.textPrimary : AppTheme.textHint,
                     ),
                   ),
                 ],
